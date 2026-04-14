@@ -12,7 +12,7 @@ export default function AdminLayoutWrapper({
 }: { 
   children: React.ReactNode;
   identitas?: IdentitasData;
-  adminAccount?: AkunItem;
+  adminAccount?: AkunItem | null;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
