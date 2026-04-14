@@ -39,27 +39,27 @@ export default async function ApbdesPage({
   // Mengurutkan data berdasarkan tahun terbaru (Z-A)
   fetchedData.sort((a, b) => Number(b.tahun_anggaran) - Number(a.tahun_anggaran));
 
-  const params = await searchParams;
-  const selectedYear = params.tahun || fetchedData[0].tahun_anggaran;
+  const params = searchParams ? await Promise.resolve(searchParams) : {};
+  const selectedYear = (params as any).tahun || fetchedData[0].tahun_anggaran;
   const data = fetchedData.find((d) => d.tahun_anggaran === selectedYear) || fetchedData[0];
 
   const availableYears = fetchedData.map((d) => d.tahun_anggaran);
 
-  // Kalkulasi persentase untuk progress bar/chart
-  const pendTotal = data.total_pendapatan;
-  const pendDanaDesaPct = (data.pend_dana_desa / pendTotal) * 100;
-  const pendAddPct = (data.pend_add / pendTotal) * 100;
-  const pendBantuanKabPct = (data.pend_bantuan_kab / pendTotal) * 100;
-  const pendBagiHasilPct = (data.pend_bagi_hasil / pendTotal) * 100;
-  const pendPadesPct = (data.pend_pades / pendTotal) * 100;
-  const pendLainPct = (data.pend_lain_lain / pendTotal) * 100;
+  // Kalkulasi persentase untuk progress bar/chart dengan aman
+  const pendTotal = data.total_pendapatan || 1; // hindari pembagian dengan nol
+  const pendDanaDesaPct = (data.pend_dana_desa / pendTotal) * 100 || 0;
+  const pendAddPct = (data.pend_add / pendTotal) * 100 || 0;
+  const pendBantuanKabPct = (data.pend_bantuan_kab / pendTotal) * 100 || 0;
+  const pendBagiHasilPct = (data.pend_bagi_hasil / pendTotal) * 100 || 0;
+  const pendPadesPct = (data.pend_pades / pendTotal) * 100 || 0;
+  const pendLainPct = (data.pend_lain_lain / pendTotal) * 100 || 0;
 
-  const belTotal = data.total_belanja;
-  const belPembangunanPct = (data.bel_pembangunan / belTotal) * 100;
-  const belPemerintahanPct = (data.bel_pemerintahan / belTotal) * 100;
-  const belPembinaanPct = (data.bel_pembinaan / belTotal) * 100;
-  const belBencanaPct = (data.bel_bencana / belTotal) * 100;
-  const belPemberdayaanPct = (data.bel_pemberdayaan / belTotal) * 100;
+  const belTotal = data.total_belanja || 1; // hindari pembagian dengan nol
+  const belPembangunanPct = (data.bel_pembangunan / belTotal) * 100 || 0;
+  const belPemerintahanPct = (data.bel_pemerintahan / belTotal) * 100 || 0;
+  const belPembinaanPct = (data.bel_pembinaan / belTotal) * 100 || 0;
+  const belBencanaPct = (data.bel_bencana / belTotal) * 100 || 0;
+  const belPemberdayaanPct = (data.bel_pemberdayaan / belTotal) * 100 || 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16 md:mt-16 pb-20 md:pb-32">

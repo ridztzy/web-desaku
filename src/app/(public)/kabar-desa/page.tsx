@@ -10,8 +10,8 @@ export default async function KabarDesaPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const resolvedParams = await searchParams;
-  const currentPage = Number(resolvedParams.page) || 1;
+  const resolvedParams = searchParams ? await Promise.resolve(searchParams) : {};
+  const currentPage = Number((resolvedParams as any).page) || 1;
   const ITEMS_PER_PAGE = 4;
 
   const [beritaDataRaw, identitasData] = await Promise.all([

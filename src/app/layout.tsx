@@ -37,6 +37,11 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "id_ID",
       type: "website",
     },
+    icons: {
+      icon: identitas?.logoDesaUrl || "/favicon.ico",
+      shortcut: identitas?.logoDesaUrl || "/favicon.ico",
+      apple: identitas?.logoDesaUrl || "/favicon.ico",
+    },
   };
 }
 
