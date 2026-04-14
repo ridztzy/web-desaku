@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!berita) return { title: "Berita Tidak Ditemukan" };
 
   return {
-    title: `${berita.judul} - Desa Kita`,
+    title: berita.judul,
     description: berita.ringkasan,
   };
 }

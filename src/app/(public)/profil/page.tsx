@@ -3,7 +3,7 @@ import heroImg from "@/assets/images/hero.jpg";
 import ProfilAccordion from "./ProfilAccordion";
 
 export const metadata = {
-  title: "Profil Desa - Beranda",
+  title: "Profil Desa",
 };
 
 export default async function ProfilPage() {

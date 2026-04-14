@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Admin Dashboard - Desa Kita",
+  title: "Admin Dashboard",
 };
 
 export default async function DashboardLayout({

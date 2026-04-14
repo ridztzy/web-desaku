@@ -8,10 +8,37 @@ import { getIdentitas } from "@/lib/sheets";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 
-export const metadata: Metadata = {
-  title: "Desa Kita - Beranda",
-  description: "Portal resmi desa dengan pelayanan modern dan informatif.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const identitas = await getIdentitas();
+  const namaDesa = identitas?.namaDesa || "Desa Wringinanom";
+  const desc = identitas?.sambutanKades ? identitas.sambutanKades.slice(0, 155) + "..." : "Portal resmi pemerintah desa dengan pelayanan modern dan informatif.";
+  
+  return {
+    title: {
+      template: `%s | ${namaDesa}`,
+      default: `${namaDesa} - Portal Resmi Pemerintahan Desa`,
+    },
+    description: desc,
+    authors: [{ name: `Pemerintah ${namaDesa}` }],
+    keywords: ["desa", namaDesa, "pelayanan desa", "wringinanom", "probolinggo", "website desa"],
+    openGraph: {
+      title: `${namaDesa} - Portal Resmi Pemerintahan Desa`,
+      description: desc,
+      url: identitas?.websiteUrl || "https://portal-wringinanom.pages.dev",
+      siteName: namaDesa,
+      images: [
+        {
+          url: identitas?.thumbnailUrl || identitas?.logoDesaUrl || "https://placehold.co/1200x630/064e3b/ffffff?text=Portal+Desa",
+          width: 1200,
+          height: 630,
+          alt: `Thumbnail ${namaDesa}`,
+        },
+      ],
+      locale: "id_ID",
+      type: "website",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

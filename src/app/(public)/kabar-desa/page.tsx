@@ -2,7 +2,7 @@ import { getBerita, getIdentitas } from "@/lib/sheets";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Kabar Desa - Desa Kita",
+  title: "Kabar Desa",
 };
 
 export default async function KabarDesaPage({

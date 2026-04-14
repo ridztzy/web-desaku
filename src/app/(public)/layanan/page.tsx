@@ -2,7 +2,7 @@ import { getLayanan, getIdentitas } from "@/lib/sheets";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Layanan Publik - Desa Kita",
+  title: "Layanan Publik",
 };
 
 type PageProps = {

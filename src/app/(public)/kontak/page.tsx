@@ -2,7 +2,7 @@ import { getIdentitas } from "@/lib/sheets";
 import { Mail, Phone, MapPin, Clock, MessageSquare } from "lucide-react";
 
 export const metadata = {
-  title: "Kontak & Aspirasi - Desa Kita",
+  title: "Kontak & Aspirasi",
 };
 
 // Custom SVG Icons

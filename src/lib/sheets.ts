@@ -71,6 +71,7 @@ export interface IdentitasData {
   instagramUrl?: string;
   tiktokUrl?: string;
   websiteUrl?: string;
+  thumbnailUrl?: string;
 }
 
 const SHEET_ID = process.env.GOOGLE_SHEETS_ID;
@@ -224,7 +225,7 @@ export async function getPerangkat(): Promise<PerangkatItem[]> {
 }
 
 export async function getIdentitas(): Promise<IdentitasData> {
-  const rows = await fetchFromSheet("identitas", "A:M");
+  const rows = await fetchFromSheet("identitas", "A:N");
   const row = rows[0] || [];
 
   return {
@@ -241,6 +242,7 @@ export async function getIdentitas(): Promise<IdentitasData> {
     instagramUrl: row[10] || "",
     tiktokUrl: row[11] || "",
     websiteUrl: row[12] || "",
+    thumbnailUrl: row[13] || "",
   };
 }
 
