@@ -174,7 +174,7 @@ export default function Navbar({
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-stone-50/80 backdrop-blur-md shadow-sm">
-      <div className="flex justify-between items-center px-6 lg:px-8 py-4 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center px-6 lg:px-8 py-2 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-3">
           {logoDesaUrl && (
             <img
