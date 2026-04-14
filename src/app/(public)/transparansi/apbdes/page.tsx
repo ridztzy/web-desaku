@@ -25,11 +25,7 @@ function formatRupiah(number: number | any) {
   }
 }
 
-export default async function ApbdesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tahun?: string }>;
-}) {
+export default async function ApbdesPage() {
   try {
     const fetchedData = await getApbdes();
 
@@ -55,8 +51,8 @@ export default async function ApbdesPage({
       (a, b) => Number(b.tahun_anggaran) - Number(a.tahun_anggaran),
     );
 
-    const params = await searchParams; // Wait safely for searchParams in Next.js 15
-    const selectedYear = params?.tahun || sortedData[0]?.tahun_anggaran;
+    // const params = await searchParams; // Wait safely for searchParams in Next.js 15
+    const selectedYear = sortedData[0]?.tahun_anggaran;
     const data =
       sortedData.find((d) => d.tahun_anggaran === selectedYear) ||
       sortedData[0];
