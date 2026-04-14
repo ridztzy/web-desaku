@@ -15,7 +15,7 @@ export default function AdminSidebar({
   isOpen: boolean;
   onClose: () => void;
   identitas?: IdentitasData;
-  adminAccount?: AkunItem;
+  adminAccount?: AkunItem | null;
 }) {
   const pathname = usePathname();
 
