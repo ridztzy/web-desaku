@@ -102,18 +102,31 @@ function parseIndonesianNumber(value: string): number {
 async function fetchFromSheet(
   tabName: string,
   range: string,
+  options: { revalidate?: number; retries?: number; delay?: number } = {}
 ): Promise<string[][]> {
   if (!SHEET_ID || !API_KEY) {
     console.warn("⚠️ Google Sheets API Key atau Sheet ID belum dikonfigurasi.");
     return [];
   }
 
+  const { revalidate = 300, retries = 2, delay = 1000 } = options;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${tabName}!${range}?key=${API_KEY}`;
 
   try {
-    const response = await fetch(url, {
-      next: { revalidate: 60 },
-    });
+    const fetchOptions: RequestInit = {};
+    if (revalidate === 0) {
+      fetchOptions.cache = "no-store";
+    } else {
+      fetchOptions.next = { revalidate };
+    }
+
+    const response = await fetch(url, fetchOptions);
+
+    if (response.status === 429 && retries > 0) {
+      console.warn(`⏳ Rate limit tercapai untuk tab "${tabName}". Mencoba lagi dalam ${delay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return fetchFromSheet(tabName, range, { revalidate, retries: retries - 1, delay: delay * 2 });
+    }
 
     if (!response.ok) {
       console.warn(
@@ -126,6 +139,11 @@ async function fetchFromSheet(
     // Memotong baris pertama karena itu adalah header kolom
     return data.values ? data.values.slice(1) : [];
   } catch (error) {
+    if (retries > 0) {
+       console.warn(`⏳ Fetch error pada tab "${tabName}". Mencoba lagi dalam ${delay}ms...`);
+       await new Promise((resolve) => setTimeout(resolve, delay));
+       return fetchFromSheet(tabName, range, { revalidate, retries: retries - 1, delay: delay * 2 });
+    }
     console.error(
       `❌ Error sistem saat fetch ${tabName}:`,
       error instanceof Error ? error.message : error,
@@ -157,7 +175,7 @@ export async function getBerita(): Promise<BeritaItem[]> {
 }
 
 export async function getAllBeritaAdmin(): Promise<BeritaItem[]> {
-  const rows = await fetchFromSheet("berita", "A:I");
+  const rows = await fetchFromSheet("berita", "A:I", { revalidate: 0 });
   return rows
     .filter((row) => row[0] && row[0].trim() !== "")
     .map((row) => ({
@@ -184,7 +202,7 @@ export async function getBeritaBySlugAdmin(
 }
 
 export async function getAkunAdmin(): Promise<AkunItem[]> {
-  const rows = await fetchFromSheet("akun", "A:E");
+  const rows = await fetchFromSheet("akun", "A:E", { revalidate: 0 });
   return rows
     .map((row) => ({
       email: row[0] || "",
