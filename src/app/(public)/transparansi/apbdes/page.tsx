@@ -11,13 +11,18 @@ export const metadata: Metadata = {
 
 // Data statis telah dihapus sesuai permintaan.
 
-function formatRupiah(number: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(number);
+function formatRupiah(number: number | any) {
+  try {
+    const num = typeof number === "number" ? number : Number(number) || 0;
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(num);
+  } catch (e) {
+    return "Rp 0,00";
+  }
 }
 
 export default async function ApbdesPage({
@@ -25,52 +30,56 @@ export default async function ApbdesPage({
 }: {
   searchParams: Promise<{ tahun?: string }>;
 }) {
-  const fetchedData = await getApbdes();
+  try {
+    const fetchedData = await getApbdes();
 
-  if (!fetchedData || fetchedData.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-32 pb-32 text-center">
-        <span className="material-symbols-outlined text-7xl text-stone-300 mb-6 block">
-          folder_off
-        </span>
-        <h1 className="text-3xl font-extrabold text-stone-400 font-headline">
-          Laporan Belum Tersedia.
-        </h1>
-        <p className="mt-4 text-stone-500">
-          Pemerintah Desa belum mengunggah dokumen APBDes.
-        </p>
-      </div>
+    if (!fetchedData || fetchedData.length === 0) {
+      return (
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-32 pb-32 text-center">
+          <span className="material-symbols-outlined text-7xl text-stone-300 mb-6 block">
+            folder_off
+          </span>
+          <h1 className="text-3xl font-extrabold text-stone-400 font-headline">
+            Laporan Belum Tersedia.
+          </h1>
+          <p className="mt-4 text-stone-500">
+            Pemerintah Desa belum mengunggah dokumen APBDes.
+          </p>
+        </div>
+      );
+    }
+
+    // Mengurutkan data berdasarkan tahun terbaru (Z-A)
+    // Membuat copy dari data untuk menghindari error "Cannot assign to read only property" jika object di-freeze oleh cache Next.js
+    const sortedData = [...fetchedData].sort(
+      (a, b) => Number(b.tahun_anggaran) - Number(a.tahun_anggaran),
     );
-  }
 
-  // Mengurutkan data berdasarkan tahun terbaru (Z-A)
-  fetchedData.sort(
-    (a, b) => Number(b.tahun_anggaran) - Number(a.tahun_anggaran),
-  );
+    const params = await searchParams; // Wait safely for searchParams in Next.js 15
+    const selectedYear = params?.tahun || sortedData[0]?.tahun_anggaran;
+    const data =
+      sortedData.find((d) => d.tahun_anggaran === selectedYear) ||
+      sortedData[0];
 
-  const params = searchParams ? await Promise.resolve(searchParams) : {};
-  const selectedYear = (params as any).tahun || fetchedData[0].tahun_anggaran;
-  const data =
-    fetchedData.find((d) => d.tahun_anggaran === selectedYear) ||
-    fetchedData[0];
+    if (!data) throw new Error("Data APBDes setelah diurutkan kosong");
 
-  const availableYears = fetchedData.map((d) => d.tahun_anggaran);
+    const availableYears = sortedData.map((d) => d.tahun_anggaran);
 
-  // Kalkulasi persentase untuk progress bar/chart dengan aman
-  const pendTotal = data.total_pendapatan || 1; // hindari pembagian dengan nol
-  const pendDanaDesaPct = (data.pend_dana_desa / pendTotal) * 100 || 0;
-  const pendAddPct = (data.pend_add / pendTotal) * 100 || 0;
-  const pendBantuanKabPct = (data.pend_bantuan_kab / pendTotal) * 100 || 0;
-  const pendBagiHasilPct = (data.pend_bagi_hasil / pendTotal) * 100 || 0;
-  const pendPadesPct = (data.pend_pades / pendTotal) * 100 || 0;
-  const pendLainPct = (data.pend_lain_lain / pendTotal) * 100 || 0;
+    // Kalkulasi persentase untuk progress bar/chart dengan aman
+    const pendTotal = data.total_pendapatan || 1; // hindari pembagian dengan nol
+    const pendDanaDesaPct = (data.pend_dana_desa / pendTotal) * 100 || 0;
+    const pendAddPct = (data.pend_add / pendTotal) * 100 || 0;
+    const pendBantuanKabPct = (data.pend_bantuan_kab / pendTotal) * 100 || 0;
+    const pendBagiHasilPct = (data.pend_bagi_hasil / pendTotal) * 100 || 0;
+    const pendPadesPct = (data.pend_pades / pendTotal) * 100 || 0;
+    const pendLainPct = (data.pend_lain_lain / pendTotal) * 100 || 0;
 
-  const belTotal = data.total_belanja || 1; // hindari pembagian dengan nol
-  const belPembangunanPct = (data.bel_pembangunan / belTotal) * 100 || 0;
-  const belPemerintahanPct = (data.bel_pemerintahan / belTotal) * 100 || 0;
-  const belPembinaanPct = (data.bel_pembinaan / belTotal) * 100 || 0;
-  const belBencanaPct = (data.bel_bencana / belTotal) * 100 || 0;
-  const belPemberdayaanPct = (data.bel_pemberdayaan / belTotal) * 100 || 0;
+    const belTotal = data.total_belanja || 1; // hindari pembagian dengan nol
+    const belPembangunanPct = (data.bel_pembangunan / belTotal) * 100 || 0;
+    const belPemerintahanPct = (data.bel_pemerintahan / belTotal) * 100 || 0;
+    const belPembinaanPct = (data.bel_pembinaan / belTotal) * 100 || 0;
+    const belBencanaPct = (data.bel_bencana / belTotal) * 100 || 0;
+    const belPemberdayaanPct = (data.bel_pemberdayaan / belTotal) * 100 || 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16 md:mt-16 pb-20 md:pb-32">
@@ -537,4 +546,21 @@ export default async function ApbdesPage({
       </div>
     </div>
   );
+  } catch (error: any) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-32 pb-32 text-center">
+        <span className="material-symbols-outlined text-7xl text-rose-500 mb-6 block">
+          error
+        </span>
+        <h1 className="text-3xl font-extrabold text-stone-700 font-headline">
+          Terjadi Kesalahan Server
+        </h1>
+        <p className="mt-4 text-stone-500 max-w-2xl mx-auto border p-4 bg-rose-50 rounded-lg text-left overflow-auto text-sm">
+          {error?.message || "Unknown error occurred"}
+          <br/>
+          {error?.stack}
+        </p>
+      </div>
+    );
+  }
 }
