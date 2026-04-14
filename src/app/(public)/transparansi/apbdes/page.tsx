@@ -25,11 +25,7 @@ function formatRupiah(number: number | any) {
   }
 }
 
-export default async function ApbdesPage(
-  props: {
-    searchParams?: Promise<{ tahun?: string }>;
-  }
-) {
+export default async function ApbdesPage() {
   try {
     const fetchedData = await getApbdes();
 
@@ -55,15 +51,7 @@ export default async function ApbdesPage(
       (a, b) => Number(b.tahun_anggaran) - Number(a.tahun_anggaran),
     );
 
-    let selectedYear = sortedData[0]?.tahun_anggaran;
-    
-    // Cloudflare Edge safe parameter unwrapping
-    if (props && props.searchParams) {
-      const params = await props.searchParams;
-      if (params?.tahun) {
-        selectedYear = params.tahun;
-      }
-    }
+    const selectedYear = sortedData[0]?.tahun_anggaran;
     const data =
       sortedData.find((d) => d.tahun_anggaran === selectedYear) ||
       sortedData[0];
