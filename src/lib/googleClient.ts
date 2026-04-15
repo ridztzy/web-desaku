@@ -4,28 +4,32 @@ const SCOPES = [
   "https://www.googleapis.com/auth/spreadsheets",
 ];
 
-function getPrivateKey(): string {
-  if (process.env.GOOGLE_PRIVATE_KEY_B64) {
-    return Buffer.from(process.env.GOOGLE_PRIVATE_KEY_B64, "base64").toString("utf-8");
+interface ServiceAccountCredential {
+  client_email: string;
+  private_key: string;
+}
+
+function getCredentials(): ServiceAccountCredential {
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    const parsed = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON) as ServiceAccountCredential;
+    return parsed;
   }
 
-  if (process.env.GOOGLE_PRIVATE_KEY) {
-    return process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
+  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+    throw new Error("Set GOOGLE_SERVICE_ACCOUNT_JSON atau GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY");
   }
 
-  throw new Error("GOOGLE_PRIVATE_KEY_B64 atau GOOGLE_PRIVATE_KEY belum di-set");
+  return {
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  };
 }
 
 export function getGoogleAuth() {
-  if (!process.env.GOOGLE_CLIENT_EMAIL) {
-    throw new Error("GOOGLE_CLIENT_EMAIL belum di-set");
-  }
+  const { client_email, private_key } = getCredentials();
 
   const auth = new google.auth.GoogleAuth({
-    credentials: {
-      client_email: process.env.GOOGLE_CLIENT_EMAIL,
-      private_key: getPrivateKey(),
-    },
+    credentials: { client_email, private_key },
     scopes: SCOPES,
   });
 
