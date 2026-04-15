@@ -1,0 +1,13 @@
+name = "portal-wringinanom"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+GOOGLE_SHEETS_ID = "1ZAw3xW97HJRhUgwYwAKm1FekRdEqFmbHcW0jvw2En8A"
+
+# Secrets (JANGAN masukkan nilainya di sini!)
+# Set menggunakan perintah CLI:
+#   npx wrangler secret put GOOGLE_SHEETS_API_KEY
+#   npx wrangler secret put GOOGLE_CLIENT_EMAIL
+#   npx wrangler secret put GOOGLE_PRIVATE_KEY
+#   npx wrangler secret put IMGBB_API_KEY
