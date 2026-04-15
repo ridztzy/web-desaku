@@ -34,12 +34,17 @@ export async function saveNewsAction(prevState: ActionState, formData: FormData)
       if (!process.env.IMGBB_API_KEY) {
         throw new Error("Kunci IMGBB_API_KEY belum dipasang!");
       }
-      const imgFormData = new FormData();
-      imgFormData.append("image", fotoFile);
+
+      const arrayBuffer = await fotoFile.arrayBuffer();
+      const base64Image = Buffer.from(arrayBuffer).toString("base64");
+
+      const imgParams = new URLSearchParams();
+      imgParams.append("image", base64Image);
 
       const imgResponse = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, {
         method: "POST",
-        body: imgFormData,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: imgParams.toString(),
       });
 
       const imgDataObj = await imgResponse.json();

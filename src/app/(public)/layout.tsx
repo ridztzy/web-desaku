@@ -31,7 +31,7 @@ export default async function PublicLayout({
         }}
       />
 
-      <main className="flex-grow pt-20">{children}</main>
+      <main className="flex-grow pt-18">{children}</main>
 
       <footer className="bg-stone-200 text-stone-600 w-full pt-16 pb-8 mt-auto border-t-[8px] border-primary">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
