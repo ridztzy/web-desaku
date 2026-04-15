@@ -33,22 +33,19 @@ export async function saveOfficialAction(prevState: ActionState, formData: FormD
         throw new Error("Kunci IMGBB_API_KEY belum dipasang di .env.local!");
       }
 
-      const arrayBuffer = await fotoFile.arrayBuffer();
-      const base64Image = Buffer.from(arrayBuffer).toString("base64");
-
-      const imgParams = new URLSearchParams();
-      imgParams.append("image", base64Image);
+      // Memanfaatkan objek FormData murni bawaan Javascript
+      const imgFormData = new FormData();
+      imgFormData.append("image", fotoFile);
 
       const imgResponse = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: imgParams.toString(),
+        body: imgFormData,
       });
 
       const imgDataObj = await imgResponse.json();
 
       if (imgDataObj.success) {
-        finalFotoUrl = imgDataObj.data.url;
+        finalFotoUrl = imgDataObj.data.url; // Langsung menghasilkan public link misal. https://i.ibb.co/xyz/...
         console.log(`[2/4] Upload berhasil! Link Final dari ImgBB: ${finalFotoUrl}`);
       } else {
         throw new Error(`Gagal Upload ke ImgBB: ${imgDataObj.error?.message || "Kesalahan tidak diketahui"}`);
