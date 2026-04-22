@@ -14,17 +14,29 @@ export async function generateMetadata(): Promise<Metadata> {
   const desc = identitas?.sambutanKades ? identitas.sambutanKades.slice(0, 155) + "..." : "Portal resmi pemerintah desa dengan pelayanan modern dan informatif.";
   
   return {
+    metadataBase: new URL(identitas?.websiteUrl || "https://portal-wringinanom.web.id"),
     title: {
       template: `%s | ${namaDesa}`,
       default: `${namaDesa} - Portal Resmi Pemerintahan Desa`,
     },
     description: desc,
     authors: [{ name: `Pemerintah ${namaDesa}` }],
-    keywords: ["desa", namaDesa, "pelayanan desa", "wringinanom", "probolinggo", "website desa"],
+    keywords: ["desa", namaDesa, "pelayanan desa", "wringinanom", "probolinggo", "website desa", "pemerintahan desa", "desa digital"],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     openGraph: {
       title: `${namaDesa} - Portal Resmi Pemerintahan Desa`,
       description: desc,
-      url: identitas?.websiteUrl || "https://portal-wringinanom.pages.dev",
+      url: identitas?.websiteUrl || "https://portal-wringinanom.web.id",
       siteName: namaDesa,
       images: [
         {

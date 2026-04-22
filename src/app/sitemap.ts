@@ -4,7 +4,7 @@ import { getBerita, getIdentitas } from '@/lib/sheets';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const identitas = await getIdentitas();
   // Gunakan URL dari sheet jika ada, kalau tidak gunakan production base URL
-  const baseUrl = identitas?.websiteUrl || 'https://portal-wringinanom.pages.dev';
+  const baseUrl = identitas?.websiteUrl || 'https://portal-wringinanom.web.id';
 
   // Ambil semua rute statis
   const staticRoutes = [

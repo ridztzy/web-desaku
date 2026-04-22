@@ -1,24 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: [
-    "192.168.1.41",
-    "192.168.1.27",
-    "192.168.1.41:3000",
-    "192.168.1.27:3000",
-    "localhost:3000",
-  ],
+  allowedDevOrigins: ["localhost:3000", "portal-wringinanom.web.id"],
 
   experimental: {
     serverActions: {
-      allowedOrigins: [
-        "192.168.1.41:3000",
-        "192.168.1.27:3000",
-        "localhost:3000",
-        "127.0.0.1:3000",
-        "portal-wringinanom.digiwrinom.workers.dev",
-        "digiwrinom.workers.dev",
-      ],
+      allowedOrigins: ["localhost:3000", "portal-wringinanom.web.id"],
       bodySizeLimit: "5mb",
     },
   },

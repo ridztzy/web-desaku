@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { useActionState } from "react";
 import { loginAction } from "./actions";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function AdminLoginPage() {
   const initialState = { success: false, message: "" };
@@ -65,6 +66,10 @@ export default function AdminLoginPage() {
                 placeholder="••••••••" 
               />
             </div>
+          </div>
+
+          <div className="flex justify-center w-full py-2">
+            <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} />
           </div>
 
           <button 

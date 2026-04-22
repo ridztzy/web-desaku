@@ -8,10 +8,15 @@ import bcrypt from "bcryptjs";
 export async function loginAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const cfTurnstileResponse = formData.get("cf-turnstile-response") as string;
   let isSuccess = false;
 
   if (!email || !password) {
     return { success: false, message: "Email dan Password wajib diisi!" };
+  }
+
+  if (process.env.TURNSTILE_SECRET_KEY && !cfTurnstileResponse) {
+    return { success: false, message: "Validasi Captcha wajib diselesaikan!" };
   }
 
   try {
@@ -23,6 +28,25 @@ export async function loginAction(prevState: unknown, formData: FormData) {
 
     if (!match) {
       return { success: false, message: "Alamat Email tidak ditemukan di sistem Desa!" };
+    }
+
+    // Verifikasi Turnstile
+    if (process.env.TURNSTILE_SECRET_KEY && cfTurnstileResponse) {
+      const turnstileVerify = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: cfTurnstileResponse,
+        }),
+      });
+      
+      const turnstileResult = await turnstileVerify.json();
+      if (!turnstileResult.success) {
+        return { success: false, message: "Validasi anti-bot gagal. Silakan muat ulang halaman dan coba lagi." };
+      }
     }
 
     // Verifikasi Hash Password API secara ketat (Tanpa fallback Teks Biasa)
