@@ -2,6 +2,12 @@ name = "portal-wringinanom"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
+main = ".open-next/worker/index.mjs"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
 [vars]
 GOOGLE_SHEETS_ID = "1ZAw3xW97HJRhUgwYwAKm1FekRdEqFmbHcW0jvw2En8A"
 
